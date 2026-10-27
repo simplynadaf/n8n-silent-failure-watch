@@ -27,19 +27,23 @@
 
 ## 📸 Screenshots
 
-> Add your own shots to `assets/` and swap the captions below.
+*Captured on the live stack in this repo (n8n 2.43.6 + Postgres 16 + Mailpit).*
 
-**The confirmation dialog when you unpublish a workflow** (n8n's own words: "prevent all production executions until you publish again")
-`assets/screenshot-unpublish-dialog.png`
+**1. n8n's own unpublish confirmation — the root cause in its own words: "This will prevent all production executions to this workflow until you publish again."**
 
-**The empty execution list while unpublished: the silent failure, made visible**
-`assets/screenshot-zero-executions.png`
+![n8n's unpublish confirmation dialog: This will prevent all production executions to this workflow until you publish again](assets/screenshot-unpublish-dialog.png)
 
-**The alert email: "Order sync: switched off (unpublished), so its trigger starts nothing"**
-`assets/screenshot-mailpit-alert.png`
+**2. The silent failure, made visible. `Order sync` ran every minute (18:12 → 18:18), then went quiet the moment it was unpublished. Every run "Succeeded" — there is no failed run for an error workflow to catch, just an absence.**
 
-**The watch list row (`Order sync`, `max_quiet_minutes` 10)**
-`assets/screenshot-watch-list.png`
+![The execution list: minute-by-minute successful runs that stop dead after unpublish, with no error](assets/screenshot-zero-executions.png)
+
+**3. The standalone check reads what actually ran and catches it across three states — healthy, the unpublished ghost, and back to normal — straight from `did_it_run_check.py` against the live API.**
+
+![Terminal: did_it_run_check.py printing healthy, then the open ghost 'Order sync: switched off (unpublished), so its trigger starts nothing', then back to normal](assets/screenshot-watch-list.png)
+
+**4. The alert email that goes out when the answer changes (delivered over SMTP to Mailpit in the test): "Order sync: switched off (unpublished), so its trigger starts nothing."**
+
+![The alert email in Mailpit naming the silent failure](assets/screenshot-mailpit-alert.png)
 
 ---
 
