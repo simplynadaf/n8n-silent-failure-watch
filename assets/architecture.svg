@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" font-family="'Segoe UI',Helvetica,Arial,sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1020"/>
+      <stop offset="1" stop-color="#121a33"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ff6b4a"/>
+      <stop offset="1" stop-color="#ff9a3d"/>
+    </linearGradient>
+    <linearGradient id="good" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#36d399"/>
+      <stop offset="1" stop-color="#2bb2a8"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#8ea2c6"/>
+    </marker>
+    <marker id="arrowAccent" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#ff8a4a"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="560" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1200" height="6" fill="url(#accent)"/>
+
+  <text x="48" y="58" fill="#ffffff" font-size="30" font-weight="700">Did it run: a liveness check that lives outside the workflow</text>
+  <text x="48" y="88" fill="#8ea2c6" font-size="17">An error workflow fires only on a failed execution. No execution means no failure means no alert. This check reads what actually ran.</text>
+
+  <!-- n8n instance box -->
+  <rect x="48" y="130" width="470" height="360" rx="16" fill="#0f1730" stroke="#243356" stroke-width="1.5" filter="url(#soft)"/>
+  <text x="72" y="166" fill="#ff8a4a" font-size="15" font-weight="700" letter-spacing="1">SELF-HOSTED n8n 2.x  ·  EC2  ·  POSTGRES</text>
+
+  <!-- watched workflow -->
+  <rect x="72" y="188" width="200" height="112" rx="12" fill="#13203f" stroke="#2b3c66" stroke-width="1.5"/>
+  <text x="88" y="214" fill="#ffffff" font-size="15" font-weight="700">Order sync</text>
+  <text x="88" y="238" fill="#8ea2c6" font-size="12.5">Schedule trigger</text>
+  <text x="88" y="258" fill="#8ea2c6" font-size="12.5">Published = runs</text>
+  <text x="88" y="282" fill="#ff6b4a" font-size="12.5">Unpublished = silent</text>
+
+  <!-- the watch workflow -->
+  <rect x="294" y="188" width="200" height="112" rx="12" fill="#13203f" stroke="#2b3c66" stroke-width="1.5"/>
+  <text x="310" y="214" fill="#ffffff" font-size="15" font-weight="700">Did it run</text>
+  <text x="310" y="238" fill="#8ea2c6" font-size="12.5">Runs every 15 min</text>
+  <text x="310" y="258" fill="#8ea2c6" font-size="12.5">Reads the n8n API</text>
+  <text x="310" y="282" fill="#8ea2c6" font-size="12.5">Compares to last check</text>
+
+  <!-- API reads -->
+  <rect x="72" y="326" width="422" height="140" rx="12" fill="#0c1428" stroke="#243356" stroke-width="1.5"/>
+  <text x="88" y="352" fill="#ff8a4a" font-size="13" font-weight="700">n8n public API  (/api/v1, X-N8N-API-KEY)</text>
+  <text x="88" y="378" fill="#cbd7ee" font-size="12.5" font-family="monospace">GET /workflows            name + active (published?)</text>
+  <text x="88" y="402" fill="#cbd7ee" font-size="12.5" font-family="monospace">GET /executions?limit=1   last run, status, mode</text>
+  <text x="88" y="426" fill="#cbd7ee" font-size="12.5" font-family="monospace">GET /executions?status=success  last good run</text>
+  <text x="88" y="452" fill="#8ea2c6" font-size="12">exists? · published? · last run ok? · ran in time?</text>
+
+  <!-- arrows inside -->
+  <line x1="272" y1="244" x2="294" y2="244" stroke="#8ea2c6" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="394" y1="300" x2="394" y2="326" stroke="#8ea2c6" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- outputs: email + heartbeat -->
+  <rect x="690" y="150" width="440" height="150" rx="16" fill="#0f1730" stroke="#243356" stroke-width="1.5" filter="url(#soft)"/>
+  <text x="714" y="186" fill="#36d399" font-size="15" font-weight="700">1 · Email, only on change</text>
+  <text x="714" y="214" fill="#cbd7ee" font-size="13">New problem opened  ->  one plain-text email</text>
+  <text x="714" y="238" fill="#cbd7ee" font-size="13">Problem stays open  ->  stays quiet (no spam)</text>
+  <text x="714" y="262" fill="#cbd7ee" font-size="13">Problem cleared     ->  "back to normal"</text>
+  <text x="714" y="288" fill="#8ea2c6" font-size="12">SMTP (Mailpit in the test, your provider in prod)</text>
+
+  <rect x="690" y="322" width="440" height="168" rx="16" fill="#0f1730" stroke="#243356" stroke-width="1.5" filter="url(#soft)"/>
+  <text x="714" y="358" fill="#ff8a4a" font-size="15" font-weight="700">2 · Heartbeat, outside n8n</text>
+  <text x="714" y="386" fill="#cbd7ee" font-size="13">After every check, ping an external monitor</text>
+  <text x="714" y="410" fill="#cbd7ee" font-size="13">Pings stop  ->  n8n (or the box) is down</text>
+  <text x="714" y="434" fill="#8ea2c6" font-size="12.5">The one blind spot internal checks cannot close:</text>
+  <text x="714" y="456" fill="#8ea2c6" font-size="12.5">a monitor that dies with the thing it watches.</text>
+
+  <!-- connecting arrows out -->
+  <path d="M494 230 C 600 230, 600 215, 686 215" fill="none" stroke="#ff8a4a" stroke-width="2.5" marker-end="url(#arrowAccent)"/>
+  <path d="M494 396 C 600 396, 600 400, 686 400" fill="none" stroke="#ff8a4a" stroke-width="2.5" marker-end="url(#arrowAccent)"/>
+
+  <text x="48" y="528" fill="#55668a" font-size="13">sarvarnadaf.com  ·  tested on n8n 2.43.6 + PostgreSQL 16.15, Amazon Linux 2023 EC2</text>
+</svg>

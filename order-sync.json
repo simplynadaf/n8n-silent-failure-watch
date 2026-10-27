@@ -1,0 +1,48 @@
+{
+  "name": "Order sync",
+  "nodes": [
+    {
+      "id": "3b0f6a52-9d1e-4c57-8a43-6e2f1d7c9a10",
+      "name": "Every minute",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "8c71e2d4-5f3a-4b9e-9d06-2a4b7e1f3c58",
+      "name": "Sample orders",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 0],
+      "parameters": {
+        "jsCode": "// Stands in for one of your own scheduled workflows.\nreturn [\n  { json: { order_id: 1001, total: 42.5 } },\n  { json: { order_id: 1002, total: 18 } }\n];"
+      }
+    }
+  ],
+  "connections": {
+    "Every minute": {
+      "main": [
+        [
+          {
+            "node": "Sample orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
