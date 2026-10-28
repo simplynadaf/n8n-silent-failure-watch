@@ -269,7 +269,7 @@ n8n-silent-failure-watch/
 No. They are complementary. The error workflow catches failed runs. This catches the runs that never happen. Run both.
 
 **Do I need a paid tool?**
-No. This repo runs entirely on the free n8n public API, the check is here and costs nothing. That said, I first came across this "did it run?" approach through **Ahmet at Krafera**, who built a packaged, importable n8n version of the same logic and shared it with me. It is what put me onto the blind spot in the first place. If you would rather import a ready-made workflow than keep a script running, it is a genuinely easier on-ramp and worth a look: [Krafera Silent Failure Watch](https://krafera.gumroad.com/l/lltue). No affiliate, just honest credit to the thing that got me started.
+No. This repo runs entirely on the free n8n public API, the check is here and costs nothing. That said, I first came across this "did it run?" approach through **Ahmet at Krafera**, who built a packaged set of importable n8n monitoring workflows and shared it with me. It is what put me onto the blind spot in the first place. The entry tier is the same "did it run" check this repo builds; higher tiers add a daily order count-check, an error alert with secrets masked, and backup/retry/weekly-report workflows. If you would rather import a tested file than keep a script running, or want the pieces I did not build here, it is a genuinely easier on-ramp, especially across client instances: [Krafera Silent Failure Watch](https://krafera.gumroad.com/l/lltue). No affiliate, just honest credit to the thing that got me started.
 
 **Will it spam me?**
 No. It emails once when a problem opens, once when it clears, and stays quiet in between.
