@@ -4,7 +4,6 @@ published: false
 description: "An n8n error workflow fires only when an execution fails. Unpublish a workflow and nothing runs, so nothing fails, so no alert. Here is the liveness check I run on EC2."
 tags: n8n, aws, devops, discuss
 cover_image: https://raw.githubusercontent.com/simplynadaf/n8n-silent-failure-watch/main/assets/cover-devto.png
-canonical_url: https://sarvarnadaf.com/n8n-silent-failure-watch
 ---
 
 Last month I lost half a day to a workflow that was working perfectly. It just was not running.
@@ -15,7 +14,7 @@ That is the gap. Every monitoring guide for n8n starts with an error workflow. A
 
 This post is about that second case, the one most setups never alert on. I will show you why your error workflow is blind to it, then build a small liveness check that catches it, and I tested the whole thing on a production-shaped stack: n8n 2.43.6 on PostgreSQL 16 on an Amazon Linux 2023 EC2 box. Not the default SQLite demo. The same shape you actually run.
 
-This is a follow-up to my earlier post on getting self-hosted n8n running on AWS. If you followed that one, this plugs the monitoring hole it leaves open.
+This is a follow-up to my earlier post on [securing self-hosted n8n on AWS](https://dev.to/aws-builders/secure-self-hosted-n8n-on-aws-the-2026-hardening-checklist-4jkk). If you followed that one, this plugs the monitoring hole it leaves open.
 
 ---
 
@@ -190,7 +189,7 @@ ssh -L 5678:localhost:5678 -L 8025:localhost:8025 ec2-user@<PUBLIC_IP>
 
 ### Step 2: Owner account and API key
 
-Open `http://localhost:5678`, create the owner account. Then **Settings** -> **n8n API** -> **Create API key**. Set expiration to **Never** (or a date you will actually act on; the check needs the key for as long as it runs). Copy it with the copy button, because n8n shows the full key only once.
+Open `http://localhost:5678`, create the owner account. Then **Settings** -> **n8n API** -> **Create API key**. Give it an expiration you will actually renew (a long-lived key is one more secret to rotate; set a calendar reminder rather than "Never"). Copy it with the copy button, because n8n shows the full key only once.
 
 One thing worth knowing that the usual guides do not test: a narrow-scoped key is enough. I ran the check with a key scoped to `workflow:read`, `workflow:list`, `execution:read`, `execution:list` and nothing else, and it worked. A key with no write scope got a clean `{"message":"Forbidden"}` on any write. So the monitor key cannot change anything even if it leaks. Give it read scopes only.
 
@@ -211,7 +210,7 @@ Open (1):
 - Order sync: switched off (unpublished), so its trigger starts nothing
 ```
 
-That is the alert your error workflow cannot produce. Publish it again and the next check clears to "back to normal." Then set your real interval to 15 minutes and add a `watch_list` row per workflow you care about.
+That is the alert your error workflow cannot produce. Publish it again and the next check clears to "back to normal." Then set your real interval to 15 minutes and add every workflow you care about to the `WATCH` list in the script.
 
 ### Step 6: Clean up the test
 
