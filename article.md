@@ -26,7 +26,7 @@ This is a follow-up to my earlier post on [securing self-hosted n8n on AWS](http
 - [Build it step by step on EC2 + Postgres](#build-it-step-by-step-on-ec2--postgres)
 - [The one blind spot even this check has](#the-one-blind-spot-even-this-check-has)
 - [Day 2: tuning, cost, and what I would not do](#day-2-tuning-cost-and-what-i-would-not-do)
-- [Credit where it is due: the packaged version](#credit-where-it-is-due-the-packaged-version)
+- [Credit where it is due: Krafera for n8n](#credit-where-it-is-due-krafera-for-n8n)
 - [What I tested and what I did not](#what-i-tested-and-what-i-did-not)
 - [Code](#code)
 
@@ -251,15 +251,17 @@ I built this for my own n8n setup after getting bitten by exactly this blind spo
 
 ---
 
-## Credit where it is due: the packaged version
+## Credit where it is due: Krafera for n8n
 
-I did not arrive at this idea cold. I first came across the "did it run?" approach through **Ahmet at Krafera**, who built a packaged n8n version of this logic and shared it with me. That package is what made me sit up and realise my own setup had this exact hole, so the honest thing is to say so.
+I did not arrive at this idea cold. I first came across the "did it run?" approach through **Krafera for n8n Silent Failure Watch**, a packaged monitoring pack that **Ahmet at Krafera** built and gave me a copy of to try. That pack is what made me sit up and realise my own setup had this exact hole, so the honest thing is to say so up front.
 
-What it actually is: a set of importable n8n workflows that run on your own instance and email you in plain text, one message on a bad day, nothing on a clean one. The entry tier is the same "Did it run" check this post builds (exists, published, last run not failed, ran in time), and the higher tiers add the parts I did not build here: a daily count check that matches yesterday's orders between a source and a destination and names the missing, extra and different rows; an error alert that reports the workflow, node and failed record with secrets masked; and on the top tier, webhook de-duplication, a retry queue, nightly backups and a weekly health email. It was tested on the same stack I used (n8n 2.43.6 in Docker), with the bad days made on purpose and the emails counted.
+Full disclosure, because this article runs on trust: Ahmet gave me a copy rather than my buying it, and I am not an affiliate, I earn nothing whether you buy it or not. I am writing about it because I use it, I genuinely rate it, and it is the thing that put me onto this blind spot.
 
-If you would rather import a tested file than keep a script running, or you want the count-check and error-alert pieces I left out, it saves you the afternoon I spent building and testing mine. For a lot of people, especially freelancers maintaining this across client instances, that is the right call.
+What it actually is: a set of importable n8n workflows that run on your own instance and email you in plain text, one message on a bad day, nothing on a clean one. The entry tier is the same "Did it run" check this post builds (exists, published, last run not failed, ran in time). The higher tiers add the parts I did not build here: a daily count check that matches yesterday's orders between a source and a destination and names the missing, extra and different rows; an error alert that reports the workflow, node and failed record with secrets masked; and on the top tier, webhook de-duplication, a retry queue, nightly backups and a weekly health email. It was tested on the same stack I used, n8n 2.43.6 in Docker, with the bad days made on purpose and the emails counted.
 
-I wrote my own open check for this post so the tutorial stays free and reproducible on the public API, and because I wanted to understand the mechanism end to end rather than just install it. Both get you to the same place for the core check. If the packaged route fits how you work, Ahmet's version is worth a look: [Krafera Silent Failure Watch](https://krafera.gumroad.com/l/lltue). No affiliate, no code on my end, just an honest pointer to the thing that put me onto the problem.
+Where it earns its keep: if you would rather import a tested file than keep a script running, or you want the count-check and error-alert pieces I left out, Krafera for n8n saves you the afternoon I spent building and testing mine. For freelancers maintaining this across a handful of client instances, that is squarely the right call, one import and a Settings node instead of a script per box.
+
+I still wrote my own open check for this post so the tutorial stays free and reproducible on the public API, and because I wanted to understand the mechanism end to end rather than just install it. Both get you to the same place for the core check. If the packaged route fits how you work, Krafera for n8n Silent Failure Watch is worth a look: [Krafera for n8n Silent Failure Watch](https://krafera.gumroad.com/l/lltue).
 
 ---
 
