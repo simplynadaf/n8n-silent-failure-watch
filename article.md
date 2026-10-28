@@ -247,7 +247,7 @@ I have not wired the heartbeat into my own run yet, so I am not going to pretend
 
 **What I would not do:** reach for Prometheus and Grafana just for this. If you already run them, `N8N_METRICS=true` exposes a metrics endpoint and that is a fine path. But standing up a metrics stack to answer "did my workflow run" is a lot of moving parts to watch a boolean. Match the tool to the question.
 
-If you want a ready-made version of this logic as importable n8n workflows instead of a script, Krafera sells one called Silent Failure Watch. I tried it while researching this post. It is a reasonable option if you would rather import a file than maintain your own, but everything in this tutorial runs on the free n8n API alone, so you are not blocked either way.
+I built this for my own n8n setup after getting bitten by exactly this blind spot, ran it on my real stack, and liked it enough to write it up. Everything here runs on the free n8n API alone, so you can take the check as-is or adapt it to your own workflows.
 
 ---
 

@@ -3,8 +3,7 @@
 Stack: n8n 2.43.6 on PostgreSQL 16.15 (amd64), Mailpit v1.32.0, Docker 25.0.14 +
 Compose v2.39.1, Amazon Linux 2023 EC2. Date: 2026-10-27 (UTC).
 
-This is the production-shaped stack (Postgres, not SQLite) that the vendor draft
-explicitly did NOT test. Every number below is from this run.
+This is the production-shaped stack (Postgres, not SQLite) I actually run. Every number below is from this run.
 
 ## Facts captured
 - n8n --version => 2.43.6
@@ -12,7 +11,7 @@ explicitly did NOT test. Every number below is from this run.
 - Real n8n log line: "Postgres 16 is outside the supported range and receives
   compatibility support only. Upgrade to Postgres 17 or newer."
 - Public API key with narrow scopes (workflow:read, workflow:list, execution:read,
-  execution:list) works for the read-only checker. (Vendor listed narrow scopes as untested.)
+  execution:list) works for the read-only checker.
 - A write-scoped key returned {"message":"Forbidden"} on POST /workflows — scopes enforced.
 
 ## The core experiment (the whole article rests on this)

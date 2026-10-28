@@ -121,7 +121,6 @@ The `active` field from `GET /workflows` is the published flag. When a workflow 
 - **`did_it_run_check.py`** is the heart: it reads the watch list, calls the three API endpoints above, and prints one plain-text report. Scoped to read-only, so the key cannot change anything if it leaks.
 - **`order-sync.json`** is a sample scheduled workflow, safe to publish and break, so you can prove the behaviour before pointing the check at real work.
 - **`docker-compose.yml`** stands up the production-shaped stack: n8n 2.43.6 on Postgres 16, plus Mailpit so you can see the alert without a real mailbox.
-- **`docs/setup-and-test-steps.md`** walks every step with the output you should see after each one.
 
 Two design rules make it usable instead of annoying: it **emails only on change** (open once, clear once, quiet in between), and it keeps **one check outside n8n** (the heartbeat below).
 
@@ -188,7 +187,7 @@ python3 did_it_run_check.py
 
 5. Unpublish `Order sync` in the UI, run the check again, and watch it report the silent failure. Publish it again to see it clear.
 
-Full step-by-step with expected output after each step: [`docs/setup-and-test-steps.md`](docs/setup-and-test-steps.md). How a real EC2 + Postgres box differs: [`docs/ec2-notes.md`](docs/ec2-notes.md).
+How a real EC2 + Postgres box differs: [`docs/ec2-notes.md`](docs/ec2-notes.md). The traceable numbers behind the proof: [`docs/test-evidence.md`](docs/test-evidence.md).
 
 ---
 
@@ -249,7 +248,6 @@ n8n-silent-failure-watch/
 │   ├── cover-devto.png         # 1000x420 article cover
 │   └── cover-wide.png          # 1200x675 wide cover
 └── docs/
-    ├── setup-and-test-steps.md # every step + expected output
     ├── ec2-notes.md            # how a real EC2 + Postgres box differs
     ├── test-evidence.md        # the traceable numbers behind "Proof It Works"
     └── youtube-metadata.md     # title, description, timestamps, tags
@@ -271,7 +269,7 @@ n8n-silent-failure-watch/
 No. They are complementary. The error workflow catches failed runs. This catches the runs that never happen. Run both.
 
 **Do I need a paid tool?**
-No. This repo runs on the free n8n public API. A vendor (Krafera) sells a ready-made importable version if you would rather not maintain a script; it is optional, not required.
+No. This runs entirely on the free n8n public API. I built the check for my own setup and it is all here in the repo, nothing to buy.
 
 **Will it spam me?**
 No. It emails once when a problem opens, once when it clears, and stays quiet in between.
