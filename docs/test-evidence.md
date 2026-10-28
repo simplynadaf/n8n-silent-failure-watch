@@ -1,4 +1,4 @@
-# Test evidence log — Sarvar's real run
+# Test evidence log: my real run
 
 Stack: n8n 2.43.6 on PostgreSQL 16.15 (amd64), Mailpit v1.32.0, Docker 25.0.14 +
 Compose v2.39.1, Amazon Linux 2023 EC2. Date: 2026-10-27 (UTC).
@@ -12,7 +12,7 @@ This is the production-shaped stack (Postgres, not SQLite) I actually run. Every
   compatibility support only. Upgrade to Postgres 17 or newer."
 - Public API key with narrow scopes (workflow:read, workflow:list, execution:read,
   execution:list) works for the read-only checker.
-- A write-scoped key returned {"message":"Forbidden"} on POST /workflows — scopes enforced.
+- A write-scoped key returned {"message":"Forbidden"} on POST /workflows, scopes enforced.
 
 ## The core experiment (the whole article rests on this)
 - Order sync (schedule trigger, every 1 min) active on Postgres.

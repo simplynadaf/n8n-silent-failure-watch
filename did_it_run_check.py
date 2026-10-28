@@ -2,9 +2,9 @@
 """
 did-it-run check, standalone proof.
 
-Implements the same 4-step liveness logic as a paid template, but in plain
-Python against the n8n public API, so the tutorial is fully reproducible
-without any paid file. This is the script I actually run in the article.
+Implements a 4-step liveness check in plain Python against the n8n public
+API, so the tutorial is fully reproducible with nothing but the API. This is
+the script I actually run in the article.
 
 For each workflow on the watch list it checks:
   1. a workflow with that exact name exists

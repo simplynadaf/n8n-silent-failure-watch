@@ -29,15 +29,15 @@
 
 *Captured on the live stack in this repo (n8n 2.43.6 + Postgres 16 + Mailpit).*
 
-**1. n8n's own unpublish confirmation — the root cause in its own words: "This will prevent all production executions to this workflow until you publish again."**
+**1. n8n's own unpublish confirmation, the root cause in its own words: "This will prevent all production executions to this workflow until you publish again."**
 
 ![n8n's unpublish confirmation dialog: This will prevent all production executions to this workflow until you publish again](assets/screenshot-unpublish-dialog.png)
 
-**2. The silent failure, made visible. `Order sync` ran every minute (18:12 → 18:18), then went quiet the moment it was unpublished. Every run "Succeeded" — there is no failed run for an error workflow to catch, just an absence.**
+**2. The silent failure, made visible. `Order sync` ran every minute (18:12 → 18:18), then went quiet the moment it was unpublished. Every run "Succeeded", there is no failed run for an error workflow to catch, just an absence.**
 
 ![The execution list: minute-by-minute successful runs that stop dead after unpublish, with no error](assets/screenshot-zero-executions.png)
 
-**3. The standalone check reads what actually ran and catches it across three states — healthy, the unpublished ghost, and back to normal — straight from `did_it_run_check.py` against the live API.**
+**3. The standalone check reads what actually ran and catches it across three states (healthy, the unpublished ghost, and back to normal) straight from `did_it_run_check.py` against the live API.**
 
 ![Terminal: did_it_run_check.py printing healthy, then the open ghost 'Order sync: switched off (unpublished), so its trigger starts nothing', then back to normal](assets/screenshot-watch-list.png)
 
@@ -196,9 +196,9 @@ How a real EC2 + Postgres box differs: [`docs/ec2-notes.md`](docs/ec2-notes.md).
 Measured on **n8n 2.43.6 + PostgreSQL 16.15** on an **Amazon Linux 2023 EC2** box, 2026-10-27 UTC. `Order sync` runs every minute.
 
 ```text
-executions BEFORE unpublish: 2 at 11:01:22 UTC
-Order sync active after unpublish: False
-executions AFTER 150s unpublished: 2 at 11:03:52 UTC
+executions BEFORE unpublish: 2
+Order sync active after unpublish: False   (unpublished at 11:01:22 UTC)
+executions AFTER 150s unpublished: 2
 => new executions while unpublished: 0
 ```
 

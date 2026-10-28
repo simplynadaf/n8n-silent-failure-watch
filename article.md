@@ -1,8 +1,8 @@
 ---
-title: "The n8n Failure Your Error Workflow Will Never Catch (Self-Hosted on AWS)"
+title: "I lost half a day to an n8n workflow that was \"working.\" It never ran."
 published: false
 description: "An n8n error workflow fires only when an execution fails. Unpublish a workflow and nothing runs, so nothing fails, so no alert. Here is the liveness check I run on EC2."
-tags: n8n, aws, devops, monitoring
+tags: n8n, aws, devops, discuss
 cover_image: https://raw.githubusercontent.com/simplynadaf/n8n-silent-failure-watch/main/assets/cover-devto.png
 canonical_url: https://sarvarnadaf.com/n8n-silent-failure-watch
 ---
@@ -60,14 +60,14 @@ I stood up n8n 2.43.6 against PostgreSQL 16 on an EC2 instance, imported a tiny 
 Then I unpublished it and watched the execution list through the API.
 
 ```bash
-# before unpublish
-executions BEFORE unpublish: 2 at 11:01:22 UTC
+# before: Order sync is published and has 2 scheduled runs on record
+executions BEFORE unpublish: 2
 
-# deactivate (unpublish) via the public API, then wait 150 seconds
+# deactivate (unpublish) via the public API at 11:01:22 UTC, then wait 150 seconds
 Order sync active after unpublish: False
 
-# 150s = at least two missed one-minute runs later
-executions AFTER 150s unpublished: 2 at 11:03:52 UTC
+# 150s later = at least two missed one-minute runs
+executions AFTER 150s unpublished: 2
 => new executions while unpublished: 0
 ```
 
@@ -265,7 +265,7 @@ That is the honest line between what I ran and what I am reasoning about.
 
 ## Code
 
-Everything here, the compose file, the sample workflow, the standalone check, the setup steps, and the architecture diagram, is in the repo:
+Everything here, the compose file, the sample workflow, the standalone check, the EC2 and Postgres notes, and the architecture diagram, is in the repo:
 
 {% embed https://github.com/simplynadaf/n8n-silent-failure-watch %}
 
