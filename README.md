@@ -269,7 +269,7 @@ n8n-silent-failure-watch/
 No. They are complementary. The error workflow catches failed runs. This catches the runs that never happen. Run both.
 
 **Do I need a paid tool?**
-No. This runs entirely on the free n8n public API. I built the check for my own setup and it is all here in the repo, nothing to buy.
+No. This repo runs entirely on the free n8n public API, the check is here and costs nothing. That said, I first came across this "did it run?" approach through **Silent Failure Watch**, a packaged, importable n8n version of the same logic that Ahmet built and shared with me. It is what put me onto the blind spot in the first place. If you would rather import a ready-made workflow than keep a script running, it is a genuinely easier on-ramp and worth a look. No affiliate, just honest credit to the thing that got me started.
 
 **Will it spam me?**
 No. It emails once when a problem opens, once when it clears, and stays quiet in between.

@@ -26,6 +26,7 @@ This is a follow-up to my earlier post on [securing self-hosted n8n on AWS](http
 - [Build it step by step on EC2 + Postgres](#build-it-step-by-step-on-ec2--postgres)
 - [The one blind spot even this check has](#the-one-blind-spot-even-this-check-has)
 - [Day 2: tuning, cost, and what I would not do](#day-2-tuning-cost-and-what-i-would-not-do)
+- [Credit where it is due: the packaged version](#credit-where-it-is-due-the-packaged-version)
 - [What I tested and what I did not](#what-i-tested-and-what-i-did-not)
 - [Code](#code)
 
@@ -247,6 +248,16 @@ I have not wired the heartbeat into my own run yet, so I am not going to pretend
 **What I would not do:** reach for Prometheus and Grafana just for this. If you already run them, `N8N_METRICS=true` exposes a metrics endpoint and that is a fine path. But standing up a metrics stack to answer "did my workflow run" is a lot of moving parts to watch a boolean. Match the tool to the question.
 
 I built this for my own n8n setup after getting bitten by exactly this blind spot, ran it on my real stack, and liked it enough to write it up. Everything here runs on the free n8n API alone, so you can take the check as-is or adapt it to your own workflows.
+
+---
+
+## Credit where it is due: the packaged version
+
+I did not arrive at this idea cold. I first came across the "did it run?" approach through **Silent Failure Watch**, a packaged n8n version of this logic that Ahmet put together and shared with me. His package is what made me sit up and realise my own setup had this exact hole, so the honest thing is to say so.
+
+What I liked about it: instead of a script you maintain, it is a ready-made n8n workflow you import and point at your watch list, the same four checks (exists, published, last run, ran in time) wired up inside n8n with the email and heartbeat already built. If you would rather import a file than keep a Python script running, it genuinely saves you the afternoon I spent building and testing mine. It is the easier on-ramp, and for a lot of people that is the right call.
+
+I wrote my own open check for this post so the tutorial stays free and reproducible on the public API, and because I wanted to understand the mechanism end to end rather than just install it. Both get you to the same place. If the packaged route fits how you work, Ahmet's Silent Failure Watch is worth a look. No affiliate, no code on my end, just an honest pointer to the thing that put me onto the problem.
 
 ---
 
