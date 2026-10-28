@@ -253,11 +253,11 @@ I built this for my own n8n setup after getting bitten by exactly this blind spo
 
 ## Credit where it is due: the packaged version
 
-I did not arrive at this idea cold. I first came across the "did it run?" approach through **Silent Failure Watch**, a packaged n8n version of this logic that Ahmet put together and shared with me. His package is what made me sit up and realise my own setup had this exact hole, so the honest thing is to say so.
+I did not arrive at this idea cold. I first came across the "did it run?" approach through **Ahmet at Krafera**, who built a packaged n8n version of this logic and shared it with me. That package is what made me sit up and realise my own setup had this exact hole, so the honest thing is to say so.
 
 What I liked about it: instead of a script you maintain, it is a ready-made n8n workflow you import and point at your watch list, the same four checks (exists, published, last run, ran in time) wired up inside n8n with the email and heartbeat already built. If you would rather import a file than keep a Python script running, it genuinely saves you the afternoon I spent building and testing mine. It is the easier on-ramp, and for a lot of people that is the right call.
 
-I wrote my own open check for this post so the tutorial stays free and reproducible on the public API, and because I wanted to understand the mechanism end to end rather than just install it. Both get you to the same place. If the packaged route fits how you work, Ahmet's Silent Failure Watch is worth a look. No affiliate, no code on my end, just an honest pointer to the thing that put me onto the problem.
+I wrote my own open check for this post so the tutorial stays free and reproducible on the public API, and because I wanted to understand the mechanism end to end rather than just install it. Both get you to the same place. If the packaged route fits how you work, Ahmet's version is worth a look: [Krafera Silent Failure Watch](https://krafera.gumroad.com/l/lltue). No affiliate, no code on my end, just an honest pointer to the thing that put me onto the problem.
 
 ---
 
