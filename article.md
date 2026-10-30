@@ -26,9 +26,10 @@ This is a follow-up to my earlier post on [securing self-hosted n8n on AWS](http
 - [Build it step by step on EC2 + Postgres](#build-it-step-by-step-on-ec2--postgres)
 - [The one blind spot even this check has](#the-one-blind-spot-even-this-check-has)
 - [Day 2: tuning, cost, and what I would not do](#day-2-tuning-cost-and-what-i-would-not-do)
-- [Credit where it is due: Krafera for n8n](#credit-where-it-is-due-krafera-for-n8n)
+- [Credit where it is due: Krafera Silent Failure Watch](#credit-where-it-is-due-krafera-silent-failure-watch)
 - [What I tested and what I did not](#what-i-tested-and-what-i-did-not)
 - [Code](#code)
+- [The uncomfortable bit, and a question for you](#the-uncomfortable-bit-and-a-question-for-you)
 
 ---
 
@@ -47,7 +48,13 @@ In every one of those, the trigger never fires. No execution record is created. 
 
 So the alerting you trust most is structurally incapable of seeing the most common way a cron job dies. It is not misconfigured. It is pointed at the wrong thing.
 
-When you unpublish a workflow, n8n even tells you what happens next, in the confirmation dialog: it will prevent all production executions until you publish again. Prevent all executions. That is the whole problem in n8n's own words.
+When you unpublish a workflow, n8n even tells you what happens next, in the confirmation dialog, in its own words:
+
+> This will prevent all production executions to this workflow until you publish again.
+
+![n8n's unpublish confirmation dialog: "This will prevent all production executions to this workflow until you publish again."](https://raw.githubusercontent.com/simplynadaf/n8n-silent-failure-watch/main/assets/screenshot-unpublish-dialog.png)
+
+Prevent all production executions. That is the whole problem in n8n's own words, printed right there in the UI, and no error workflow is listening for it.
 
 ---
 
@@ -73,9 +80,17 @@ executions AFTER 150s unpublished: 2
 
 Zero. Two and a half minutes, at least two scheduled runs missed, and the execution count did not move by one.
 
+![The n8n execution list: minute-by-minute successful runs that stop dead the moment the workflow is unpublished, with no failed run and no error](https://raw.githubusercontent.com/simplynadaf/n8n-silent-failure-watch/main/assets/screenshot-zero-executions.png)
+
+Look at what that execution list shows: every run before the unpublish says "Succeeded." There is no red run, no error, nothing for an error workflow to fire on. Just an absence that starts the moment the workflow goes quiet.
+
 No execution means no status to read. No status means nothing an error workflow could fire on. I republished, and within 70 seconds a new run appeared and the count went from 2 to 3. The trigger resumed exactly where it left off, and for those 150 seconds, every internal error alert I could have wired up would have stayed silent.
 
 That is the silent failure. Not a red run you missed. A run that never happened.
+
+If you would rather watch it than read it, here is the same thing in 90 seconds, break it, watch nothing fire, fix it:
+
+{% embed https://www.youtube.com/@sarvar-nadaf %}
 
 ---
 
@@ -251,17 +266,17 @@ I built this for my own n8n setup after getting bitten by exactly this blind spo
 
 ---
 
-## Credit where it is due: Krafera for n8n
+## Credit where it is due: Krafera Silent Failure Watch
 
-I did not arrive at this idea cold. I first came across the "did it run?" approach through **Krafera for n8n Silent Failure Watch**, a packaged monitoring pack that **Ahmet at Krafera** built and gave me a copy of to try. That pack is what made me sit up and realise my own setup had this exact hole, so the honest thing is to say so up front.
+I did not arrive at this idea cold. I first came across the "did it run?" approach through **Krafera Silent Failure Watch**, a packaged monitoring pack that **Ahmet at Krafera** built and gave me a copy of to try. That pack is what made me sit up and realise my own setup had this exact hole, so the honest thing is to say so up front.
 
 Full disclosure, because this article runs on trust: Ahmet gave me a copy rather than my buying it, and I am not an affiliate, I earn nothing whether you buy it or not. I am writing about it because I use it, I genuinely rate it, and it is the thing that put me onto this blind spot.
 
-What it actually is: a set of importable n8n workflows that run on your own instance and email you in plain text, one message on a bad day, nothing on a clean one. The entry tier is the same "Did it run" check this post builds (exists, published, last run not failed, ran in time). The higher tiers add the parts I did not build here: a daily count check that matches yesterday's orders between a source and a destination and names the missing, extra and different rows; an error alert that reports the workflow, node and failed record with secrets masked; and on the top tier, webhook de-duplication, a retry queue, nightly backups and a weekly health email. It was tested on the same stack I used, n8n 2.43.6 in Docker, with the bad days made on purpose and the emails counted.
+What it actually is: a set of importable n8n workflows that run on your own instance and email you in plain text, one message on a bad day, nothing on a clean one. The entry tier is the same "Did it run" check this post builds (exists, published, last run not failed, ran in time), set up out of the box the way a monitor should be: it emails once when something breaks and then stays quiet until the state changes, sends a "back to normal" when it recovers, and can ping an outside heartbeat so a stopped check or a stopped server shows up on an external monitor, the one gap my script leaves open. The higher tiers add the parts I did not build here: a daily count check that matches yesterday's orders between a source and a destination and names the missing, extra and different rows; an error alert that reports the workflow, node and failed record with secrets masked; and on the top tier, webhook de-duplication, a retry queue, nightly backups and a weekly health email. Krafera tested the pack on the same n8n version I used, 2.43.6 in Docker, on the default SQLite database rather than the Postgres-on-EC2 stack I ran, with the bad days made on purpose and the emails counted.
 
-Where it earns its keep: if you would rather import a tested file than keep a script running, or you want the count-check and error-alert pieces I left out, Krafera for n8n saves you the afternoon I spent building and testing mine. For freelancers maintaining this across a handful of client instances, that is squarely the right call, one import and a Settings node instead of a script per box.
+Where it earns its keep: if you would rather import a tested file than keep a script running, or you want the count-check and error-alert pieces I left out, Krafera Silent Failure Watch saves you the afternoon I spent building and testing mine. For freelancers maintaining this across a handful of client instances, that is squarely the right call, one import and a Settings node instead of a script per box.
 
-I still wrote my own open check for this post so the tutorial stays free and reproducible on the public API, and because I wanted to understand the mechanism end to end rather than just install it. Both get you to the same place for the core check. If the packaged route fits how you work, Krafera for n8n Silent Failure Watch is worth a look: [Krafera for n8n Silent Failure Watch](https://krafera.gumroad.com/l/lltue).
+I still wrote my own open check for this post so the tutorial stays free and reproducible on the public API, and because I wanted to understand the mechanism end to end rather than just install it. Both get you to the same place for the core check. If the packaged route fits how you work, Krafera Silent Failure Watch is worth a look: [Krafera Silent Failure Watch](https://krafera.gumroad.com/l/lltue).
 
 ---
 
@@ -290,9 +305,20 @@ git clone https://github.com/simplynadaf/n8n-silent-failure-watch
 cd n8n-silent-failure-watch
 ```
 
-{% embed https://www.youtube.com/@sarvar-nadaf %}
+If this saved you a stale-report debugging session, the comment box is open (see below).
 
-The 3-minute walkthrough (break it, watch the alert fire, fix it) is on the channel. If this saved you a stale-report debugging session, the comment box is open: what is the sneakiest way an n8n workflow has gone quiet on you in production? I collect these.
+---
+
+## The uncomfortable bit, and a question for you
+
+Here is the stance I will defend in the comments: most n8n monitoring advice is theatre. It tells you to build an error workflow, which watches for failures. But the failure that actually took my workflow down could not produce a failure, by definition. An alert that can only fire on a run that happened is blind to the most common way a scheduled job dies, which is a run that never happened. We keep instrumenting the thing that is easy to catch instead of the thing that actually bites.
+
+So two questions, and I genuinely read every answer:
+
+1. What is the sneakiest way an n8n (or cron, or Lambda) job has gone quiet on you in production, with nothing to show for it? I collect these.
+2. Do you run a "did it run?" liveness check today, or only an error workflow? If only the error workflow, what would have to break for you to add one?
+
+Disagree? Tell me where this reasoning falls down. That is the most useful comment you can leave.
 
 ---
 

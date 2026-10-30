@@ -63,11 +63,14 @@ Article: https://dev.to/sarvar_04   (swap for the exact article URL after publis
 🧰 Tested on
 n8n 2.43.6 · PostgreSQL 16.15 · Amazon Linux 2023 EC2 · Docker Compose v2
 
-🙏 Credit: I first came across this "did it run?" approach through Krafera for n8n
-Silent Failure Watch, a packaged set of importable n8n monitoring workflows by
-Ahmet at Krafera. The entry tier is the same check this video builds; higher tiers
-add a daily order count-check, an error alert with secrets masked, plus webhook
-de-dup, a retry queue, nightly backups and a weekly report.
+🙏 Credit: I first came across this "did it run?" approach through Krafera Silent
+Failure Watch, a packaged set of importable n8n monitoring workflows by
+Ahmet at Krafera. The entry tier is the same check this video builds, set up to
+email once and stay quiet until the state changes, send a "back to normal", and
+ping an outside heartbeat (the gap my script leaves open); higher tiers add a
+daily order count-check, an error alert with secrets masked, plus webhook
+de-dup, a retry queue, nightly backups and a weekly report. Krafera tested it on
+the same n8n version I used, 2.43.6 in Docker (on SQLite, not my Postgres/EC2 run).
 Disclosure: Ahmet gave me a copy to try. I'm not an affiliate and earn nothing
 either way; I use it and genuinely rate it. Have a look: https://krafera.gumroad.com/l/lltue
 

@@ -19,7 +19,7 @@
 
 ### The check, across three states
 
-*A separate workflow reads the n8n API every 15 minutes and asks four questions per watched workflow (the decision). When the answer changes, one plain-text email goes out and a heartbeat pings an outside monitor (the signal).*
+*A separate workflow reads the n8n API every 15 minutes and asks four questions per watched workflow (the decision). When the answer changes, one plain-text email goes out, and a heartbeat to an outside monitor closes the last gap (the signal). The email path is tested here; the heartbeat is the recommended outside layer (see [The One Blind Spot](#-the-one-blind-spot)).*
 
 ![Architecture: n8n on EC2 and Postgres, a watch workflow reading the public API, and two outputs, an email on change and an external heartbeat](assets/architecture.png)
 
@@ -269,7 +269,7 @@ n8n-silent-failure-watch/
 No. They are complementary. The error workflow catches failed runs. This catches the runs that never happen. Run both.
 
 **Do I need a paid tool?**
-No. This repo runs entirely on the free n8n public API, the check is here and costs nothing. That said, I first came across this "did it run?" approach through **Krafera for n8n Silent Failure Watch**, a packaged set of importable n8n monitoring workflows that Ahmet at Krafera built and gave me a copy of to try (disclosure: gifted, not an affiliate, I earn nothing either way). It is what put me onto the blind spot, and I genuinely use it. The entry tier is the same "did it run" check this repo builds; higher tiers add a daily order count-check, an error alert with secrets masked, and backup/retry/weekly-report workflows. If you would rather import a tested file than keep a script running, or want the pieces I did not build here, it is a genuinely easier on-ramp, especially across client instances: [Krafera for n8n Silent Failure Watch](https://krafera.gumroad.com/l/lltue).
+No. This repo runs entirely on the free n8n public API, the check is here and costs nothing. That said, I first came across this "did it run?" approach through **Krafera Silent Failure Watch**, a packaged set of importable n8n monitoring workflows that Ahmet at Krafera built and gave me a copy of to try (disclosure: gifted, not an affiliate, I earn nothing either way). It is what put me onto the blind spot, and I genuinely use it. The entry tier is the same "did it run" check this repo builds, set up out of the box to email once and stay quiet until the state changes, send a "back to normal" on recovery, and ping an outside heartbeat (the gap this repo's script leaves open); higher tiers add a daily order count-check, an error alert with secrets masked, and backup/retry/weekly-report workflows. Krafera tested it on the same n8n version I used, 2.43.6 in Docker, on the default SQLite database rather than the Postgres-on-EC2 stack here. If you would rather import a tested file than keep a script running, or want the pieces I did not build here, it is a genuinely easier on-ramp, especially across client instances: [Krafera Silent Failure Watch](https://krafera.gumroad.com/l/lltue).
 
 **Will it spam me?**
 No. It emails once when a problem opens, once when it clears, and stays quiet in between.
@@ -279,6 +279,16 @@ Tested on self-hosted Postgres. The logic only uses the public API and should po
 
 **Why read-only API key?**
 The check never writes. A read-only key cannot change or delete anything if it ever leaks. A write attempt from a read-only key returns `{"message":"Forbidden"}`, confirmed in the test.
+
+---
+
+## 💬 The uncomfortable bit
+
+Most n8n monitoring advice is theatre. It tells you to build an error workflow, which watches for failures. But the failure that takes a scheduled workflow down most often cannot produce a failure, by definition: the trigger never fires, so there is no run, so there is nothing to fail. An alert that can only fire on a run that happened is blind to the most common way a cron job dies, which is a run that never happened.
+
+This repo instruments the thing that actually bites, not the thing that is easy to catch. If you run only an error workflow today, that is the gap it leaves open.
+
+**What is the sneakiest way an n8n (or cron, or Lambda) job has gone quiet on you in production?** Open an issue or start a discussion, I collect these. Disagree with the reasoning? Even better, tell me where it falls down.
 
 ---
 
